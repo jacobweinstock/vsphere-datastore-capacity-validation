@@ -44,8 +44,8 @@ func init() {
 
 func (c *capacityResponse) run() error {
 	var err error
-	timeout := 5 * time.Minute
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	tout := time.Duration(timeout) * time.Minute
+	ctx, cancel := context.WithTimeout(context.Background(), tout)
 	defer cancel()
 	client, err := vsphere.NewClient(url, user, password, ctx)
 	if err != nil {

@@ -31,8 +31,8 @@ func init() {
 
 func (c *SizeResponse) run() error {
 	var err error
-	timeout := 5 * time.Minute
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	tout := time.Duration(timeout) * time.Minute
+	ctx, cancel := context.WithTimeout(context.Background(), tout)
 	defer cancel()
 	c.VMName = vmName
 	client, err := vsphere.NewClient(url, user, password, ctx)

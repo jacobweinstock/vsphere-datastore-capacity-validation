@@ -19,6 +19,7 @@ var (
 	user                          string
 	password                      string
 	datacenter                    string
+	timeout                       int
 	responseFileDirectory         = "./"
 	responseFileName              = "response.json"
 	responseFileDirectoryFallback = "./"
@@ -48,6 +49,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&user, "user", "n", "", "vCenter username")
 	rootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "vCenter password")
 	rootCmd.PersistentFlags().StringVarP(&datacenter, "datacenter", "c", "", "vCenter datacenter name")
+	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 5, "timeout (default 5 minutes)")
 	_ = rootCmd.MarkPersistentFlagRequired("url")
 	_ = rootCmd.MarkPersistentFlagRequired("user")
 	_ = rootCmd.MarkPersistentFlagRequired("password")
