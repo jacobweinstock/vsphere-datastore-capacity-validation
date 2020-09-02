@@ -11,7 +11,6 @@ import (
 
 var (
 	datastore  string
-	datacenter string
 	vmName     string
 	vmSize     float64
 
@@ -34,11 +33,9 @@ var (
 )
 
 func init() {
-	capacityCmd.PersistentFlags().StringVarP(&datacenter, "datacenter", "c", "", "vCenter datacenter name")
 	capacityCmd.PersistentFlags().StringVarP(&datastore, "datastore", "s", "", "vCenter datastore name")
 	capacityCmd.PersistentFlags().StringVarP(&vmName, "vmName", "m", "", "name of an existing vmName (takes precedence over size)")
 	capacityCmd.PersistentFlags().Float64VarP(&vmSize, "vmSize", "z", 0, "vm disk size in GBs")
-	_ = capacityCmd.MarkPersistentFlagRequired("datacenter")
 	_ = capacityCmd.MarkPersistentFlagRequired("datastore")
 	rootCmd.AddCommand(capacityCmd)
 }

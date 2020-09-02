@@ -21,9 +21,8 @@ var (
 )
 
 func init() {
-	sizeCmd.PersistentFlags().StringVarP(&datacenter, "datacenter", "c", "", "vCenter datacenter name")
+
 	sizeCmd.PersistentFlags().StringVarP(&vmName, "vmName", "m", "", "name of an existing vmName (takes precedence over size)")
-	_ = sizeCmd.MarkPersistentFlagRequired("datacenter")
 	_ = sizeCmd.MarkPersistentFlagRequired("vmName")
 	rootCmd.AddCommand(sizeCmd)
 }

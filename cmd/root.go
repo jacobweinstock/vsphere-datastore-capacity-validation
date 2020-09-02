@@ -18,6 +18,7 @@ var (
 	url string
 	user string
 	password string
+	datacenter string
 	responseFileDirectory         = "./"
 	responseFileName              = "response.json"
 	responseFileDirectoryFallback = "./"
@@ -46,9 +47,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&url, "url", "u", "", "vCenter url")
 	rootCmd.PersistentFlags().StringVarP(&user, "user", "n", "", "vCenter username")
 	rootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "vCenter password")
+	rootCmd.PersistentFlags().StringVarP(&datacenter, "datacenter", "c", "", "vCenter datacenter name")
 	_ = rootCmd.MarkPersistentFlagRequired("url")
 	_ = rootCmd.MarkPersistentFlagRequired("user")
 	_ = rootCmd.MarkPersistentFlagRequired("password")
+	_ = rootCmd.MarkPersistentFlagRequired("datacenter")
 }
 
 func er(msg interface{}) {
