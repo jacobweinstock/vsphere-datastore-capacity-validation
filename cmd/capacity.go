@@ -38,7 +38,7 @@ func init() {
 	capacityCmd.PersistentFlags().StringVarP(&vCenterPassword, "password", "p", "", "vCenter password")
 	capacityCmd.PersistentFlags().StringVarP(&vCenterDatacenter, "datacenter", "c", "", "vCenter datacenter name")
 	capacityCmd.PersistentFlags().StringVarP(&vCenterDatastore, "datastore", "s", "", "vCenter datastore name")
-	capacityCmd.PersistentFlags().StringVarP(&vCenterVM, "vm", "m", "", "name of an existing VM")
+	capacityCmd.PersistentFlags().StringVarP(&vCenterVM, "vm", "m", "", "name of an existing VM (takes precedence over size)")
 	capacityCmd.PersistentFlags().Float64VarP(&vmSize, "size", "z", 0, "vm disk size in GBs")
 	_ = capacityCmd.MarkPersistentFlagRequired("url")
 	_ = capacityCmd.MarkPersistentFlagRequired("user")
