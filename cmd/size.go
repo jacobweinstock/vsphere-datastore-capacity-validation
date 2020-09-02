@@ -34,7 +34,7 @@ func init() {
 	rootCmd.AddCommand(sizeCmd)
 }
 
-func (s *SizeResponse) run() error {
+func (c *SizeResponse) run() error {
 	var err error
 	client, err := vsphere.NewClient(url, user, password)
 	if err != nil {
@@ -49,9 +49,9 @@ func (s *SizeResponse) run() error {
 	if err != nil {
 		return err
 	}
-	s.TotalDiskSize = totalSize
-	s.VMName = vmName
-	s.Success = true
+	c.TotalDiskSize = totalSize
+	c.VMName = vmName
+	c.Success = true
 	return err
 }
 

@@ -34,11 +34,11 @@ type SizeResponse struct {
 }
 
 // ToLogrusFields is a helper for the logrus library
-func (s SizeResponse) ToLogrusFields() logrus.Fields {
+func (c SizeResponse) ToLogrusFields() logrus.Fields {
 	return logrus.Fields{
-		"vmName":        s.VMName,
-		"totalDiskSize": s.TotalDiskSize,
-		"success":       s.Success,
-		"errorMsg":      s.ErrorMsg,
+		"vmName":        c.VMName,
+		"totalDiskSize": c.TotalDiskSize,
+		"success":       c.Success,
+		"errorMsg":      c.ErrorMsg,
 	}
 }
