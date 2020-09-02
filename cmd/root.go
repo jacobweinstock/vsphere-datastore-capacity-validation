@@ -15,10 +15,10 @@ import (
 
 var (
 	cfgFile                       string
-	url string
-	user string
-	password string
-	datacenter string
+	url                           string
+	user                          string
+	password                      string
+	datacenter                    string
 	responseFileDirectory         = "./"
 	responseFileName              = "response.json"
 	responseFileDirectoryFallback = "./"

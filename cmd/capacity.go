@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	datastore  string
-	vmName     string
-	vmSize     float64
+	datastore string
+	vmName    string
+	vmSize    float64
 
 	capacityCmd = &cobra.Command{
 		Use:   "capacity",
