@@ -29,7 +29,6 @@ var (
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			flagEnvSetter()
 			var capacity capacityResponse
 			err := capacity.run()
 			capacity.response(err)
@@ -51,32 +50,6 @@ func init() {
 	_ = capacityCmd.MarkPersistentFlagRequired("datacenter")
 	_ = capacityCmd.MarkPersistentFlagRequired("datastore")
 	rootCmd.AddCommand(capacityCmd)
-}
-
-// cobra and viper play nice but dont allow for a common variable to get either the flag or the env var
-// this function make a variable the single source of the flag and env value
-func flagEnvSetter() {
-	if url == "" {
-		url = viper.GetString("url")
-	}
-	if user == "" {
-		user = viper.GetString("user")
-	}
-	if password == "" {
-		password = viper.GetString("password")
-	}
-	if datacenter == "" {
-		datacenter = viper.GetString("datacenter")
-	}
-	if datastore == "" {
-		datastore = viper.GetString("datastore")
-	}
-	if vmName == "" {
-		vmName = viper.GetString("vmName")
-	}
-	if vmSize == 0 {
-		vmSize = viper.GetFloat64("vmSize")
-	}
 }
 
 func (c *capacityResponse) run() error {

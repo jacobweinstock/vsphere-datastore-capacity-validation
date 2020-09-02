@@ -1,2 +1,4 @@
 bin/
 .git/
+README.md
+.gitignore
