@@ -1,2 +1,5 @@
-# vsphere-datastore-capacity-validation
-validate a datastore has capacity for a VM
+# vsphere-validator
+
+Generic vSphere Validations
+
+* validate a datastore has capacity for a VM
