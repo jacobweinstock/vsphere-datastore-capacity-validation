@@ -29,3 +29,7 @@ ifeq (${OSFLAG},linux)
 else
 	@$(MAKE) darwin
 endif
+
+.PHONY: image
+image: ## Build container image
+	docker build -t ${BINARY} .
