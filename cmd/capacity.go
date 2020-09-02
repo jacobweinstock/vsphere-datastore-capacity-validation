@@ -20,8 +20,8 @@ var (
 
 	capacityCmd = &cobra.Command{
 		Use:   "capacity",
-		Short: "Validate a vmName's disks or a size in GB is available on a specified datastore",
-		Long:  "Validate a vmName's disks or a size in GB is available on a specified datastore",
+		Short: "Validate that a vmName's disk(s) or a size, given in GB, is available on a specified datastore",
+		Long:  "Validate that a vmName's disk(s) or a size, given in GB, is available on a specified datastore",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if vmName == "" && vmSize == 0 || viper.Get("vmName") == "" && viper.Get("vmSize") == 0 {
 				return errors.New("please set a vm name or a size. use either a flag (--vmName, --vmSize) or an env var (VVALIDATOR_VMNAME, VVALIDATOR_VMSIZE)")
