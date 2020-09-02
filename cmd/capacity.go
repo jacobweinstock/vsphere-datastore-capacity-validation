@@ -1,12 +1,14 @@
 package cmd
 
 import (
+	"context"
 	"github.com/jacobweinstock/vvalidator/pkg/vsphere"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"path"
+	"time"
 )
 
 var (
@@ -42,7 +44,10 @@ func init() {
 
 func (c *capacityResponse) run() error {
 	var err error
-	client, err := vsphere.NewClient(url, user, password)
+	timeout := 5 * time.Minute
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	client, err := vsphere.NewClient(url, user, password, ctx)
 	if err != nil {
 		return err
 	}

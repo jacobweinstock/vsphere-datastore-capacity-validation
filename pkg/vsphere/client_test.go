@@ -1,11 +1,13 @@
 package vsphere
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/vmware/govmomi/simulator"
 )
@@ -62,7 +64,9 @@ func setupSimulator() error {
 	password, _ := server.URL.User.Password()
 	url := "https://" + server.URL.Host
 	sim.server = server
-	conn, err := NewClient(url, username, password)
+	timeout := 5 * time.Minute
+	ctx, _ := context.WithTimeout(context.Background(), timeout)
+	conn, err := NewClient(url, username, password, ctx)
 	if err != nil {
 		return err
 	}
@@ -89,7 +93,9 @@ func TestMain(m *testing.M) {
 func TestNewClientBadURL(t *testing.T) {
 	url := "bad_url"
 	expectedErrorMsg := fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: no such host", url)
-	_, err := NewClient(url, "user", "pass")
+	timeout := 5 * time.Minute
+	ctx, _ := context.WithTimeout(context.Background(), timeout)
+	_, err := NewClient(url, "user", "pass", ctx)
 	if err == nil {
 		t.Fatal("received an unexpected nil error")
 	}

@@ -25,7 +25,7 @@ func TestDatastoreCapacitySuccess(t *testing.T) {
 }
 
 func almostEqual(a, b float64) bool {
-	return math.Abs(a-b) <= 2
+	return math.Abs(a-b) <= 9
 }
 
 func TestDatastoreCapacityNoDSSpecified(t *testing.T) {

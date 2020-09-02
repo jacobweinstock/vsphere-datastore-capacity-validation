@@ -20,12 +20,12 @@ type Session struct {
 	Folder       *object.Folder
 	ResourcePool *object.ResourcePool
 	Network      object.NetworkReference
+	Ctx          context.Context
 }
 
 // NewClient returns a new vsphere Session
-func NewClient(server string, username string, password string) (*Session, error) {
+func NewClient(server string, username string, password string, ctx context.Context) (*Session, error) {
 	sm := new(Session)
-	ctx := context.TODO()
 	if !strings.HasPrefix(server, "https://") && !strings.HasPrefix(server, "http://") {
 		server = "https://" + server
 	}
@@ -49,6 +49,7 @@ func NewClient(server string, username string, password string) (*Session, error
 		return nil, errors.Wrap(err, "unable to login to vSphere")
 	}
 	sm.Conn = client
+	sm.Ctx = ctx
 
 	return sm, nil
 }
@@ -56,7 +57,7 @@ func NewClient(server string, username string, password string) (*Session, error
 // GetDatacenter returns the govmomi object for a datacenter
 func (s *Session) GetDatacenter(name string) (*object.Datacenter, error) {
 	finder := find.NewFinder(s.Conn.Client, true)
-	datacenter, err := finder.Datacenter(context.TODO(), name)
+	datacenter, err := finder.Datacenter(s.Ctx, name)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error finding datacenter %s", name)
 	}
@@ -67,7 +68,7 @@ func (s *Session) GetDatacenter(name string) (*object.Datacenter, error) {
 func (s *Session) GetDatastore(name string) (*object.Datastore, error) {
 	finder := find.NewFinder(s.Conn.Client, true)
 	finder.SetDatacenter(s.Datacenter)
-	datastore, err := finder.Datastore(context.TODO(), name)
+	datastore, err := finder.Datastore(s.Ctx, name)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error finding datastore %s", name)
 	}
@@ -78,7 +79,7 @@ func (s *Session) GetDatastore(name string) (*object.Datastore, error) {
 func (s *Session) GetNetwork(name string) (object.NetworkReference, error) {
 	finder := find.NewFinder(s.Conn.Client, true)
 	finder.SetDatacenter(s.Datacenter)
-	network, err := finder.Network(context.TODO(), name)
+	network, err := finder.Network(s.Ctx, name)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error finding network %s", name)
 	}
@@ -89,7 +90,7 @@ func (s *Session) GetNetwork(name string) (object.NetworkReference, error) {
 func (s *Session) GetResourcePool(name string) (*object.ResourcePool, error) {
 	finder := find.NewFinder(s.Conn.Client, true)
 	finder.SetDatacenter(s.Datacenter)
-	resourcePool, err := finder.ResourcePool(context.TODO(), name)
+	resourcePool, err := finder.ResourcePool(s.Ctx, name)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error finding resource pool %s", name)
 	}
@@ -100,7 +101,7 @@ func (s *Session) GetResourcePool(name string) (*object.ResourcePool, error) {
 func (s *Session) GetVM(name string) (*object.VirtualMachine, error) {
 	finder := find.NewFinder(s.Conn.Client, true)
 	finder.SetDatacenter(s.Datacenter)
-	vm, err := finder.VirtualMachine(context.TODO(), name)
+	vm, err := finder.VirtualMachine(s.Ctx, name)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error finding VM %s", name)
 	}
