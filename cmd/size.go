@@ -22,7 +22,7 @@ var (
 
 func init() {
 
-	sizeCmd.PersistentFlags().StringVarP(&vmName, "vmName", "m", "", "name of an existing vmName (takes precedence over size)")
+	sizeCmd.PersistentFlags().StringVarP(&vmName, "vmName", "m", "", "name of an existing VM")
 	_ = sizeCmd.MarkPersistentFlagRequired("vmName")
 	rootCmd.AddCommand(sizeCmd)
 }
