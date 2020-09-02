@@ -49,7 +49,6 @@ func init() {
 }
 
 func validateCapacity() {
-	log.Info("validating datastore capacity")
 	client, err := vsphere.NewClient(vCenterURL, vCenterUser, vCenterPassword)
 	if err != nil {
 		log.Fatal(err)
@@ -77,7 +76,11 @@ func validateCapacity() {
 
 	_, free, err := client.DatastoreCapacity()
 	if err != nil {
-		log.Fatal(err)
+		log.WithFields(log.Fields{
+			"requestedSpaceInGBs": requestedDiskSpace,
+			"freeSpaceInGBs":      free,
+			"spaceAvailable":      false,
+		}).Fatal(err)
 	}
 	if requestedDiskSpace <= free {
 		log.WithFields(log.Fields{

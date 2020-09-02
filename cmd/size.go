@@ -32,7 +32,6 @@ func init() {
 }
 
 func getVMSize() {
-	log.Info("getting VM disk(s) size")
 	client, err := vsphere.NewClient(vCenterURL, vCenterUser, vCenterPassword)
 	if err != nil {
 		log.Fatal(err)
