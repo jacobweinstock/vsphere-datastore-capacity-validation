@@ -67,32 +67,26 @@ func (c *capacityResponse) run() error {
 		return err
 	}
 
-	var requestedDiskSpace float64
 	if vmName != "" {
-		totalSize, err := client.GetVMTotalStorageSize(vmName)
+		c.RequestedSpaceInGBs, err = client.GetVMTotalStorageSize(vmName)
 		if err != nil {
 			return err
 		}
-		requestedDiskSpace = totalSize
 	} else {
-		requestedDiskSpace = vmSize
+		c.RequestedSpaceInGBs = vmSize
 	}
 
-	_, free, err := client.DatastoreCapacity()
+	_, c.FreeSpaceInGBs, err = client.DatastoreCapacity()
 	if err != nil {
-		c.RequestedSpaceInGBs = requestedDiskSpace
-		c.FreeSpaceInGBs = free
 		c.SpaceAvailable = false
 		c.Success = false
 		return err
 	}
-	if requestedDiskSpace <= free {
+	if c.RequestedSpaceInGBs <= c.FreeSpaceInGBs {
 		c.SpaceAvailable = true
 	} else {
 		c.SpaceAvailable = false
 	}
-	c.RequestedSpaceInGBs = requestedDiskSpace
-	c.FreeSpaceInGBs = free
 	c.Success = true
 	return err
 }
