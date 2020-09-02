@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/pflag"
+	"io"
 	"os"
+	"path"
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
@@ -11,9 +14,10 @@ import (
 )
 
 var (
-	cfgFile     string
-	jsonLogging bool
-	verbose     bool
+	cfgFile                       string
+	responseFileDirectory         = "./"
+	responseFileName              = "response.json"
+	responseFileDirectoryFallback = "./"
 
 	rootCmd = &cobra.Command{
 		Use:   "vvalidator",
@@ -21,6 +25,11 @@ var (
 		Long:  `vvalidator is a CLI library that does generic vsphere validations.`,
 	}
 )
+
+type Validation interface {
+	run()
+	response(error)
+}
 
 // Execute executes the root command.
 func Execute() error {
@@ -30,8 +39,7 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig, initLogging)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.vvalidator.yaml)")
-	rootCmd.PersistentFlags().BoolVarP(&jsonLogging, "json", "j", false, "Enable json logging")
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose logging")
+	rootCmd.PersistentFlags().StringVar(&responseFileDirectory, "dir", "./", "directory to write response file (default is the current directory)")
 }
 
 func er(msg interface{}) {
@@ -58,15 +66,47 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+	postInitCommands(rootCmd.Commands())
 }
 
 func initLogging() {
-	log.SetOutput(os.Stdout)
-	if verbose {
-		log.SetReportCaller(true)
-		log.SetLevel(log.DebugLevel)
+	log.SetFormatter(&log.JSONFormatter{})
+	if _, err := os.Stat(responseFileDirectory); os.IsNotExist(err) {
+		err := os.Mkdir(responseFileDirectory, 0755)
+		if err != nil {
+			responseFileDirectory = responseFileDirectoryFallback
+		}
 	}
-	if jsonLogging {
-		log.SetFormatter(&log.JSONFormatter{})
+	respFile, err := os.Create(path.Join(responseFileDirectory, responseFileName))
+	if err != nil {
+		responseFileDirectory = responseFileDirectoryFallback
+		respFile, err = os.Create(responseFileDirectory + responseFileName)
+		if err != nil {
+			log.SetOutput(os.Stdout)
+			log.WithFields(log.Fields{
+				"responseFile": path.Join(responseFileDirectory, responseFileName),
+			}).Fatal("could not create response file")
+		}
+
 	}
+	mw := io.MultiWriter(os.Stdout, respFile)
+	log.SetOutput(mw)
+}
+
+func postInitCommands(commands []*cobra.Command) {
+	for _, cmd := range commands {
+		presetRequiredFlags(cmd)
+		if cmd.HasSubCommands() {
+			postInitCommands(cmd.Commands())
+		}
+	}
+}
+
+func presetRequiredFlags(cmd *cobra.Command) {
+	viper.BindPFlags(cmd.Flags())
+	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		if viper.IsSet(f.Name) && viper.GetString(f.Name) != "" {
+			cmd.Flags().Set(f.Name, viper.GetString(f.Name))
+		}
+	})
 }

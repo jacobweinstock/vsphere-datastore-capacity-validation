@@ -5,41 +5,46 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"path"
 )
 
 var (
-	vCenterURL        string
-	vCenterUser       string
-	vCenterPassword   string
-	vCenterDatastore  string
-	vCenterDatacenter string
-	vCenterVM         string
-	vmSize            float64
+	url        string
+	user       string
+	password   string
+	datastore  string
+	datacenter string
+	vmName     string
+	vmSize     float64
 
 	capacityCmd = &cobra.Command{
 		Use:   "capacity",
-		Short: "Validate a VM's disks or a size in GB is available on a specified datastore",
-		Long:  "Validate a VM's disks or a size in GB is available on a specified datastore",
+		Short: "Validate a vmName's disks or a size in GB is available on a specified datastore",
+		Long:  "Validate a vmName's disks or a size in GB is available on a specified datastore",
 		Args: func(cmd *cobra.Command, args []string) error {
-			if vCenterVM == "" && vmSize == 0 {
-				return errors.New("please set either --vm or --size")
+			if vmName == "" && vmSize == 0 || viper.Get("vmName") == "" && viper.Get("vmSize") == 0 {
+				return errors.New("please set a vm name or a size. use either a flag (--vmName, --vmSize) or an env var (VVALIDATOR_VMNAME, VVALIDATOR_VMSIZE)")
 			}
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			validateCapacity()
+			flagEnvSetter()
+			var capacity capacityResponse
+			err := capacity.run()
+			capacity.response(err)
 		},
 	}
 )
 
 func init() {
-	capacityCmd.PersistentFlags().StringVarP(&vCenterURL, "url", "u", "", "vCenter URL")
-	capacityCmd.PersistentFlags().StringVarP(&vCenterUser, "user", "n", "", "vCenter username")
-	capacityCmd.PersistentFlags().StringVarP(&vCenterPassword, "password", "p", "", "vCenter password")
-	capacityCmd.PersistentFlags().StringVarP(&vCenterDatacenter, "datacenter", "c", "", "vCenter datacenter name")
-	capacityCmd.PersistentFlags().StringVarP(&vCenterDatastore, "datastore", "s", "", "vCenter datastore name")
-	capacityCmd.PersistentFlags().StringVarP(&vCenterVM, "vm", "m", "", "name of an existing VM (takes precedence over size)")
-	capacityCmd.PersistentFlags().Float64VarP(&vmSize, "size", "z", 0, "vm disk size in GBs")
+	capacityCmd.PersistentFlags().StringVarP(&url, "url", "u", "", "vCenter url")
+	capacityCmd.PersistentFlags().StringVarP(&user, "user", "n", "", "vCenter username")
+	capacityCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "vCenter password")
+	capacityCmd.PersistentFlags().StringVarP(&datacenter, "datacenter", "c", "", "vCenter datacenter name")
+	capacityCmd.PersistentFlags().StringVarP(&datastore, "datastore", "s", "", "vCenter datastore name")
+	capacityCmd.PersistentFlags().StringVarP(&vmName, "vmName", "m", "", "name of an existing vmName (takes precedence over size)")
+	capacityCmd.PersistentFlags().Float64VarP(&vmSize, "vmSize", "z", 0, "vm disk size in GBs")
 	_ = capacityCmd.MarkPersistentFlagRequired("url")
 	_ = capacityCmd.MarkPersistentFlagRequired("user")
 	_ = capacityCmd.MarkPersistentFlagRequired("password")
@@ -48,27 +53,53 @@ func init() {
 	rootCmd.AddCommand(capacityCmd)
 }
 
-func validateCapacity() {
-	client, err := vsphere.NewClient(vCenterURL, vCenterUser, vCenterPassword)
-	if err != nil {
-		log.Fatal(err)
+// cobra and viper play nice but dont allow for a common variable to get either the flag or the env var
+// this function make a variable the single source of the flag and env value
+func flagEnvSetter() {
+	if url == "" {
+		url = viper.GetString("url")
 	}
-	client.Datacenter, err = client.GetDatacenter(vCenterDatacenter)
-	if err != nil {
-		log.Fatal(err)
+	if user == "" {
+		user = viper.GetString("user")
 	}
-	client.Datastore, err = client.GetDatastore(vCenterDatastore)
+	if password == "" {
+		password = viper.GetString("password")
+	}
+	if datacenter == "" {
+		datacenter = viper.GetString("datacenter")
+	}
+	if datastore == "" {
+		datastore = viper.GetString("datastore")
+	}
+	if vmName == "" {
+		vmName = viper.GetString("vmName")
+	}
+	if vmSize == 0 {
+		vmSize = viper.GetFloat64("vmSize")
+	}
+}
+
+func (c *capacityResponse) run() error {
+	var err error
+	client, err := vsphere.NewClient(url, user, password)
 	if err != nil {
-		log.Fatal(err)
+		return err
+	}
+	client.Datacenter, err = client.GetDatacenter(datacenter)
+	if err != nil {
+		return err
+	}
+	client.Datastore, err = client.GetDatastore(datastore)
+	if err != nil {
+		return err
 	}
 
 	var requestedDiskSpace float64
-	if vCenterVM != "" {
-		totalSize, err := client.GetVMTotalStorageSize(vCenterVM)
+	if vmName != "" {
+		totalSize, err := client.GetVMTotalStorageSize(vmName)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-
 		requestedDiskSpace = totalSize
 	} else {
 		requestedDiskSpace = vmSize
@@ -76,23 +107,29 @@ func validateCapacity() {
 
 	_, free, err := client.DatastoreCapacity()
 	if err != nil {
-		log.WithFields(log.Fields{
-			"requestedSpaceInGBs": requestedDiskSpace,
-			"freeSpaceInGBs":      free,
-			"spaceAvailable":      false,
-		}).Fatal(err)
+		c.RequestedSpaceInGBs = requestedDiskSpace
+		c.FreeSpaceInGBs = free
+		c.SpaceAvailable = false
+		c.Success = false
+		return err
 	}
 	if requestedDiskSpace <= free {
-		log.WithFields(log.Fields{
-			"requestedSpaceInGBs": requestedDiskSpace,
-			"freeSpaceInGBs":      free,
-			"spaceAvailable":      true,
-		}).Info("requested datastore space SHOULD be available")
+		c.SpaceAvailable = true
 	} else {
-		log.WithFields(log.Fields{
-			"requestedSpaceInGBs": requestedDiskSpace,
-			"freeSpaceInGBs":      free,
-			"spaceAvailable":      false,
-		}).Info("requested datastore space is NOT available")
+		c.SpaceAvailable = false
 	}
+	c.RequestedSpaceInGBs = requestedDiskSpace
+	c.FreeSpaceInGBs = free
+	c.Success = true
+	return err
+}
+
+func (c *capacityResponse) response(err error) {
+	r := c.ToLogrusFields()
+	r["responseFile"] = path.Join(responseFileDirectory, responseFileName)
+	if err != nil {
+		r["errorMsg"] = err.Error()
+		log.WithFields(r).Fatal()
+	}
+	log.WithFields(r).Info()
 }
