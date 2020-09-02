@@ -36,6 +36,7 @@ func init() {
 
 func (c *SizeResponse) run() error {
 	var err error
+	c.VMName = vmName
 	client, err := vsphere.NewClient(url, user, password)
 	if err != nil {
 		return err
@@ -44,13 +45,10 @@ func (c *SizeResponse) run() error {
 	if err != nil {
 		return err
 	}
-
-	totalSize, err := client.GetVMTotalStorageSize(vmName)
+	c.TotalDiskSize, err = client.GetVMTotalStorageSize(c.VMName)
 	if err != nil {
 		return err
 	}
-	c.TotalDiskSize = totalSize
-	c.VMName = vmName
 	c.Success = true
 	return err
 }
