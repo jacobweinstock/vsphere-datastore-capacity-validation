@@ -15,6 +15,9 @@ import (
 
 var (
 	cfgFile                       string
+	url string
+	user string
+	password string
 	responseFileDirectory         = "./"
 	responseFileName              = "response.json"
 	responseFileDirectoryFallback = "./"
@@ -40,6 +43,12 @@ func init() {
 	cobra.OnInitialize(initConfig, initLogging)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.vvalidator.yaml)")
 	rootCmd.PersistentFlags().StringVar(&responseFileDirectory, "dir", "./", "directory to write response file (default is the current directory)")
+	rootCmd.PersistentFlags().StringVarP(&url, "url", "u", "", "vCenter url")
+	rootCmd.PersistentFlags().StringVarP(&user, "user", "n", "", "vCenter username")
+	rootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "vCenter password")
+	_ = rootCmd.MarkPersistentFlagRequired("url")
+	_ = rootCmd.MarkPersistentFlagRequired("user")
+	_ = rootCmd.MarkPersistentFlagRequired("password")
 }
 
 func er(msg interface{}) {

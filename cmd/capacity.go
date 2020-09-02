@@ -10,9 +10,6 @@ import (
 )
 
 var (
-	url        string
-	user       string
-	password   string
 	datastore  string
 	datacenter string
 	vmName     string
@@ -37,16 +34,10 @@ var (
 )
 
 func init() {
-	capacityCmd.PersistentFlags().StringVarP(&url, "url", "u", "", "vCenter url")
-	capacityCmd.PersistentFlags().StringVarP(&user, "user", "n", "", "vCenter username")
-	capacityCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "vCenter password")
 	capacityCmd.PersistentFlags().StringVarP(&datacenter, "datacenter", "c", "", "vCenter datacenter name")
 	capacityCmd.PersistentFlags().StringVarP(&datastore, "datastore", "s", "", "vCenter datastore name")
 	capacityCmd.PersistentFlags().StringVarP(&vmName, "vmName", "m", "", "name of an existing vmName (takes precedence over size)")
 	capacityCmd.PersistentFlags().Float64VarP(&vmSize, "vmSize", "z", 0, "vm disk size in GBs")
-	_ = capacityCmd.MarkPersistentFlagRequired("url")
-	_ = capacityCmd.MarkPersistentFlagRequired("user")
-	_ = capacityCmd.MarkPersistentFlagRequired("password")
 	_ = capacityCmd.MarkPersistentFlagRequired("datacenter")
 	_ = capacityCmd.MarkPersistentFlagRequired("datastore")
 	rootCmd.AddCommand(capacityCmd)
