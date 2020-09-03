@@ -96,9 +96,9 @@ func TestMain(m *testing.M) {
 func TestNewClientBadURL(t *testing.T) {
 	url := "bad_url"
 	expectedErrorMsgs := map[string]int{
-		fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: no such host", url):                         1,
-		fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: Temporary failure in name resolution", url): 2,
-		fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v on 192.168.65.1:53: no such host", url):      3,
+		fmt.Sprintf("unable to create new vSphere client against https://%v/sdk: Post \"https://%[1]v/sdk\": dial tcp: lookup %[1]v: no such host", url):                         1,
+		fmt.Sprintf("unable to create new vSphere client against https://%v/sdk: Post \"https://%[1]v/sdk\": dial tcp: lookup %[1]v: Temporary failure in name resolution", url): 2,
+		fmt.Sprintf("unable to create new vSphere client against https://%v/sdk: Post \"https://%[1]v/sdk\": dial tcp: lookup %[1]v on 192.168.65.1:53: no such host", url):      3,
 	}
 	timeout := 5 * time.Minute
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
