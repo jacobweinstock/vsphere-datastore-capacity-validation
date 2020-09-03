@@ -16,3 +16,5 @@
 .idea
 bin/
 response.json
+envs
+envs_unset
