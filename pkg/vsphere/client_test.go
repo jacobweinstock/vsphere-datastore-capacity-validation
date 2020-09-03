@@ -15,6 +15,7 @@ import (
 var sim struct {
 	conn   *Session
 	server *simulator.Server
+	cancel context.CancelFunc
 }
 
 const rootPEM = `
@@ -65,8 +66,9 @@ func setupSimulator() error {
 	url := "https://" + server.URL.Host
 	sim.server = server
 	timeout := 5 * time.Minute
-	ctx, _ := context.WithTimeout(context.Background(), timeout)
-	conn, err := NewClient(url, username, password, ctx)
+	ctx, can := context.WithTimeout(context.Background(), timeout)
+	sim.cancel = can
+	conn, err := NewClient(ctx, url, username, password)
 	if err != nil {
 		return err
 	}
@@ -76,6 +78,7 @@ func setupSimulator() error {
 }
 
 func shutdown() {
+	sim.cancel()
 	sim.server.Close()
 }
 
@@ -94,8 +97,9 @@ func TestNewClientBadURL(t *testing.T) {
 	url := "bad_url"
 	expectedErrorMsg := fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: no such host", url)
 	timeout := 5 * time.Minute
-	ctx, _ := context.WithTimeout(context.Background(), timeout)
-	_, err := NewClient(url, "user", "pass", ctx)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	_, err := NewClient(ctx, url, "user", "pass")
 	if err == nil {
 		t.Fatal("received an unexpected nil error")
 	}

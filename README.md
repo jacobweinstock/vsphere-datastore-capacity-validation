@@ -1,5 +1,8 @@
 # vSphere Validator
 
+[![Test and Build](https://github.com/jacobweinstock/vvalidator/workflows/Test%20and%20Build/badge.svg)](https://github.com/jacobweinstock/vvalidator/actions?query=workflow%3A%22Test+and+Build%22)
+[![Go Report](https://goreportcard.com/badge/github.com/jacobweinstock/vvalidator)](https://goreportcard.com/report/github.com/jacobweinstock/vvalidator)
+
 Generic vSphere Validations
 
 ## Usage

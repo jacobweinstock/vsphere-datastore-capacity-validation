@@ -15,7 +15,7 @@ var (
 		Short: "Gets the total size of all disk(s) attached to a vmName",
 		Long:  "Gets the total size of all disk(s) attached to a vmName",
 		Run: func(cmd *cobra.Command, args []string) {
-			var size SizeResponse
+			var size sizeResponse
 			err := size.run()
 			size.response(err)
 		},
@@ -29,13 +29,13 @@ func init() {
 	rootCmd.AddCommand(sizeCmd)
 }
 
-func (c *SizeResponse) run() error {
+func (c *sizeResponse) run() error {
 	var err error
 	tout := time.Duration(timeout) * time.Minute
 	ctx, cancel := context.WithTimeout(context.Background(), tout)
 	defer cancel()
 	c.VMName = vmName
-	client, err := vsphere.NewClient(url, user, password, ctx)
+	client, err := vsphere.NewClient(ctx, url, user, password)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (c *SizeResponse) run() error {
 	return err
 }
 
-func (c *SizeResponse) response(err error) {
+func (c *sizeResponse) response(err error) {
 	r := c.ToLogrusFields()
 	r["responseFile"] = path.Join(responseFileDirectory, responseFileName)
 	if err != nil {

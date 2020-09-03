@@ -13,6 +13,7 @@ import (
 	"github.com/vmware/govmomi"
 )
 
+// Session contains vsphere connection and object data
 type Session struct {
 	Conn         *govmomi.Client
 	Datacenter   *object.Datacenter
@@ -24,7 +25,7 @@ type Session struct {
 }
 
 // NewClient returns a new vsphere Session
-func NewClient(server string, username string, password string, ctx context.Context) (*Session, error) {
+func NewClient(ctx context.Context, server string, username string, password string) (*Session, error) {
 	sm := new(Session)
 	if !strings.HasPrefix(server, "https://") && !strings.HasPrefix(server, "http://") {
 		server = "https://" + server

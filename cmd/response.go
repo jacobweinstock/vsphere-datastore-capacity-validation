@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type BaseResponse struct {
+type baseResponse struct {
 	Success  bool   `json:"success"`
 	ErrorMsg string `json:"errorMsg"`
 }
@@ -13,7 +13,7 @@ type capacityResponse struct {
 	RequestedSpaceInGBs float64 `json:"requestedSpaceInGBs"`
 	FreeSpaceInGBs      float64 `json:"freeSpaceInGBs"`
 	SpaceAvailable      bool    `json:"spaceAvailable"`
-	BaseResponse        `json:",inline"`
+	baseResponse        `json:",inline"`
 }
 
 // ToLogrusFields is a helper for the logrus library
@@ -27,14 +27,14 @@ func (s capacityResponse) ToLogrusFields() logrus.Fields {
 	}
 }
 
-type SizeResponse struct {
+type sizeResponse struct {
 	VMName        string  `json:"vmName"`
 	TotalDiskSize float64 `json:"totalDiskSize"`
-	BaseResponse  `json:",inline"`
+	baseResponse  `json:",inline"`
 }
 
 // ToLogrusFields is a helper for the logrus library
-func (c SizeResponse) ToLogrusFields() logrus.Fields {
+func (c sizeResponse) ToLogrusFields() logrus.Fields {
 	return logrus.Fields{
 		"vmName":        c.VMName,
 		"totalDiskSize": c.TotalDiskSize,

@@ -47,7 +47,7 @@ func (c *capacityResponse) run() error {
 	tout := time.Duration(timeout) * time.Minute
 	ctx, cancel := context.WithTimeout(context.Background(), tout)
 	defer cancel()
-	client, err := vsphere.NewClient(url, user, password, ctx)
+	client, err := vsphere.NewClient(ctx, url, user, password)
 	if err != nil {
 		return err
 	}
