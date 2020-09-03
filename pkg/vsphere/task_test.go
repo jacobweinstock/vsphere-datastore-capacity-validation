@@ -9,23 +9,22 @@ import (
 func TestDatastoreCapacitySuccess(t *testing.T) {
 	var err error
 	capacityExpected := 465.62699127197266
-	freeExpected := 371.9
 	name := "/DC0/datastore/LocalDS_0"
 	sim.conn.Datastore, err = sim.conn.GetDatastore(name)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	capacity, free, err := sim.conn.DatastoreCapacity()
+	capacity, _, err := sim.conn.DatastoreCapacity()
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	if !almostEqual(capacity, capacityExpected) || !almostEqual(freeExpected, free) {
-		t.Fatalf("capacity expected: %v, actual: %v\nfree expected: %v, actual: %v\n", capacityExpected, capacity, freeExpected, free)
+	if !almostEqual(capacity, capacityExpected) {
+		t.Fatalf("capacity expected: %v, actual: %v", capacityExpected, capacity)
 	}
 }
 
 func almostEqual(a, b float64) bool {
-	return math.Abs(a-b) <= 9
+	return math.Abs(a-b) <= 1
 }
 
 func TestDatastoreCapacityNoDSSpecified(t *testing.T) {

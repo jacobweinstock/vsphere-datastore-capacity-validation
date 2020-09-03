@@ -95,7 +95,10 @@ func TestMain(m *testing.M) {
 
 func TestNewClientBadURL(t *testing.T) {
 	url := "bad_url"
-	expectedErrorMsg := fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: no such host", url)
+	expectedErrorMsgs := map[string]int{
+		fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: no such host", url): 1,
+		fmt.Sprintf("unable to create new vSphere client: Post \"https://%v/sdk\": dial tcp: lookup %[1]v: Temporary failure in name resolution", url): 2,
+	}
 	timeout := 5 * time.Minute
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
@@ -103,8 +106,9 @@ func TestNewClientBadURL(t *testing.T) {
 	if err == nil {
 		t.Fatal("received an unexpected nil error")
 	}
-	if err.Error() != expectedErrorMsg {
-		t.Fatalf("expected: %v, actual: %v", expectedErrorMsg, err.Error())
+	_, exists := expectedErrorMsgs[err.Error()]
+	if !exists {
+		t.Fatalf("expected: [%v], actual: [%v]", expectedErrorMsgs, err.Error())
 	}
 }
 
