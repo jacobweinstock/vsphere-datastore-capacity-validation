@@ -43,6 +43,23 @@ VVALIDATOR_VMNAME=mytemplate \
 vvalidator capacity
 ```
 
+##### Response Object
+
+For more details on the data types, the go `capacityResponse` struct can be found here: `cmd/response.go`
+```json
+{
+  "errorMsg": "",
+  "freeSpaceInGBs": 0,
+  "level": "",
+  "msg": "",
+  "requestedSpaceInGBs": 0,
+  "responseFile": "",
+  "spaceAvailable": false,
+  "success": false,
+  "time": ""
+}
+```
+
 #### Size
 
 Returns the size of all disks, in GBs, attached to a VM or template. 
@@ -64,6 +81,22 @@ VVALIDATOR_URL=vcenter.example.org \
 VVALIDATOR_DATACENTER=dc1 \
 VVALIDATOR_VMNAME=mytemplate \
 vvalidator size
+```
+
+##### Response Object
+
+For more details on the data types, the go `sizeResponse` struct can be found here: `cmd/response.go`
+```json
+{
+  "errorMsg": "",
+  "level": "",
+  "msg": "",
+  "responseFile": "",
+  "success": false,
+  "time": "",
+  "totalDiskSize": 0,
+  "vmName": ""
+}
 ```
 
 ### Container Image
