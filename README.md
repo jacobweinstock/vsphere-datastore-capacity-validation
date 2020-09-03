@@ -65,7 +65,7 @@ vvalidator size
 
 ### Container Image
 
-A container image is available to run `vvalidator`.
+A container image is available at `docker pull ghcr.io/jacobweinstock/vvalidator:latest`  
 
 #### USAGE
 
@@ -73,28 +73,40 @@ Build the image locally with `make build`
 
 ```bash
 # CAPACITY using cli flags
-docker run -it --rm vvalidator size -c DC01 -p 'secret' -n user -u 10.96.160.151 -m bionic-server-cloudimg-amd64
+docker run -it --rm ghcr.io/jacobweinstock/vvalidator size \
+  --datacenter DC01 \
+  --password 'secret' \
+  --user user \
+  --url 10.96.160.151 \
+  --vmName bionic-server-cloudimg-amd64
 
 # using env vars
 docker run -it --rm \
   -e VVALIDATOR_URL=10.96.160.151 \
-  -e VVALIDATOR_DATACENTER=NetApp-HCI-Datacenter-01 \
-  -e VVALIDATOR_DATASTORE=NetApp-HCI-Datastore-01 \
-  -e VVALIDATOR_USER=administrator@vsphere.local \
-  -e VVALIDATOR_PASSWORD='NetApp1!!' \
+  -e VVALIDATOR_DATACENTER=Datacenter-01 \
+  -e VVALIDATOR_DATASTORE=Datastore-01 \
+  -e VVALIDATOR_USER=admin \
+  -e VVALIDATOR_PASSWORD='secret' \
   -e VVALIDATOR_VMNAME=bionic-server-cloudimg-amd64 \
-  vvalidator capacity
+  -v ${PWD}/response.json:/response.json \
+  ghcr.io/jacobweinstock/vvalidator capacity
 
 
 # SIZE using cli flags
-docker run -it --rm vvalidator size -c DC01 -p 'secret' -n user -u 10.96.160.151 -m bionic-server-cloudimg-amd64
+docker run -it --rm ghcr.io/jacobweinstock/vvalidator size \
+  --datacenter DC01 \
+  --password 'secret' \
+  --user user \
+  --url 10.96.160.151 \
+  --vmName bionic-server-cloudimg-amd64
 
 # using env vars
 docker run -it --rm \
   -e VVALIDATOR_URL=10.96.160.151 \
-  -e VVALIDATOR_DATACENTER=NetApp-HCI-Datacenter-01 \
-  -e VVALIDATOR_USER=administrator@vsphere.local \
-  -e VVALIDATOR_PASSWORD='NetApp1!!' \
+  -e VVALIDATOR_DATACENTER=Datacenter-01 \
+  -e VVALIDATOR_USER=admin \
+  -e VVALIDATOR_PASSWORD='secret' \
   -e VVALIDATOR_VMNAME=bionic-server-cloudimg-amd64 \
-  vvalidator size
+  -v ${PWD}/response.json:/response.json \
+  ghcr.io/jacobweinstock/vvalidator size
 ```
