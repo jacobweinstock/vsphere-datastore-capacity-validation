@@ -14,6 +14,11 @@ cover: ## Run unit tests with coverage report
 	go tool cover -func=cover.out
 	rm -rf cover.out
 
+.PHONY: lint
+lint:  ## Run linting
+	@echo be sure golangci-lint is installed: https://golangci-lint.run/usage/install/
+	golangci-lint run
+
 .PHONY: linux
 linux: ## Compile for linux
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags '-s -w -extldflags "-static"' -o bin/${BINARY}-linux main.go

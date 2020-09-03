@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/jacobweinstock/vvalidator/cmd"
 	"os"
 	"os/signal"
 	"syscall"
-	"context"
+
+	"github.com/jacobweinstock/vvalidator/cmd"
 )
 
 func main() {
@@ -14,15 +14,11 @@ func main() {
 		os.Exit(exitCode)
 	}()
 
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
 	defer func() {
 		signal.Stop(signals)
-		cancel()
 	}()
 
 	defer func() {

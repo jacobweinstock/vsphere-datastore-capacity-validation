@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/pflag"
 	"io"
 	"os"
 	"path"
+
+	"github.com/spf13/pflag"
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
@@ -30,11 +31,6 @@ var (
 		Long:  `vvalidator is a CLI library that does generic vsphere validations.`,
 	}
 )
-
-type validation interface {
-	run()
-	response(error)
-}
 
 // Execute executes the root command.
 func Execute() error {

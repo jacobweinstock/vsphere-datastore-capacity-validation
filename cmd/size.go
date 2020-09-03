@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"context"
+	"path"
+	"time"
+
 	"github.com/jacobweinstock/vvalidator/pkg/vsphere"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"path"
-	"time"
 )
 
 var (
