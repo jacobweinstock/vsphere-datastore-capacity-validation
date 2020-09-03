@@ -3,11 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/pflag"
 	"io"
 	"os"
 	"path"
-
-	"github.com/spf13/pflag"
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
@@ -29,7 +28,7 @@ var (
 	password                      string
 	datacenter                    string
 	timeout                       int
-	responseFileDirectory         = "./"
+	responseFileDirectory         string
 	responseFileName              = "response.json"
 	responseFileDirectoryFallback = "./"
 
@@ -108,6 +107,14 @@ func initConfig() {
 
 func initLogging() {
 	log.SetFormatter(&log.JSONFormatter{})
+
+	if responseFileDirectory == "./" {
+		curDir, err := os.Getwd()
+		if err == nil {
+			responseFileDirectory = path.Join(curDir, responseFileDirectory)
+		}
+	}
+
 	if _, err := os.Stat(responseFileDirectory); os.IsNotExist(err) {
 		err := os.Mkdir(responseFileDirectory, 0755)
 		if err != nil {
