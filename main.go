@@ -21,15 +21,12 @@ func main() {
 		signal.Stop(signals)
 	}()
 
-	defer func() {
-		signal.Stop(signals)
-	}()
-
 	go func() {
 		// TODO propagate ctx through Execute
 		if err := cmd.Execute(); err != nil {
 			exitCode = 1
 		}
+		close(signals)
 	}()
 
 	<-signals
