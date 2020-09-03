@@ -2,7 +2,6 @@ package vsphere
 
 import (
 	"fmt"
-	"math"
 	"testing"
 )
 
@@ -20,10 +19,6 @@ func TestDatastoreCapacitySuccess(t *testing.T) {
 	if capacity < free {
 		t.Fatalf("expected capacity(%v) > free(%v)", capacity, free)
 	}
-}
-
-func almostEqual(a, b float64) bool {
-	return math.Abs(a-b) <= 1
 }
 
 func TestDatastoreCapacityNoDSSpecified(t *testing.T) {

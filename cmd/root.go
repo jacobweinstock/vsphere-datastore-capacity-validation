@@ -3,10 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/pflag"
 	"io"
 	"os"
 	"path"
+
+	"github.com/spf13/pflag"
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
