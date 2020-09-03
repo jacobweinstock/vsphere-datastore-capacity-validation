@@ -32,4 +32,4 @@ endif
 
 .PHONY: image
 image: ## Build container image
-	docker build -t ${BINARY} .
+	docker build --rm -t ${BINARY} .

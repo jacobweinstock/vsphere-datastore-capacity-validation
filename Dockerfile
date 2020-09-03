@@ -1,5 +1,7 @@
 FROM golang:1.14 as base
-COPY . /code
+COPY main.go Makefile go.mod go.sum /code/
+COPY cmd /code/cmd/
+COPY pkg /code/pkg/
 WORKDIR /code
 RUN make build
 

@@ -10,12 +10,12 @@ Build the binary by running `make build`
 
 ### Commands
 
-All commands return a response to stdout and a file (defaults to `./response.json`) in json format.
+All commands return a response to stdout, and a file (defaults to `./response.json`) in json format.
 
 #### Capacity
 
 Calculates if a datastore has space for the requested disk(s) size.  
-The disk(s) size can be collected from a VM if the name is give to `--name` (flag) or `VVALIDATOR_VMNAME` (env var).  
+The disk(s) size can be collected from a VM if the name is give to `--vmName` (flag) or `VVALIDATOR_VMNAME` (env var).
 
 ```bash
 # validate a datastore has capacity for a VM

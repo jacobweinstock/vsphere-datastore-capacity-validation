@@ -1,4 +1,6 @@
-bin/
-.git/
+bin
+bin/*
+.git
+.git/*
 README.md
 .gitignore
