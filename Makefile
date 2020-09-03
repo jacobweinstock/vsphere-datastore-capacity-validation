@@ -38,6 +38,10 @@ else
 	@$(MAKE) darwin
 endif
 
+.PHONY: shell
+shell: ## Drop into a shell with code mounted in
+	docker run -it --rm -v ${PWD}:/code -w /code golang || true
+
 .PHONY: image
 image: ## Build container image
 	docker build --rm -t ${BINARY} .

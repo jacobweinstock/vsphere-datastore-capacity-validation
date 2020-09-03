@@ -8,18 +8,17 @@ import (
 
 func TestDatastoreCapacitySuccess(t *testing.T) {
 	var err error
-	capacityExpected := 465.62699127197266
 	name := "/DC0/datastore/LocalDS_0"
 	sim.conn.Datastore, err = sim.conn.GetDatastore(name)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	capacity, _, err := sim.conn.DatastoreCapacity()
+	capacity, free, err := sim.conn.DatastoreCapacity()
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	if !almostEqual(capacity, capacityExpected) {
-		t.Fatalf("capacity expected: %v, actual: %v", capacityExpected, capacity)
+	if capacity < free {
+		t.Fatalf("expected capacity(%v) > free(%v)", capacity, free)
 	}
 }
 
