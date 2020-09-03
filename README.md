@@ -94,7 +94,7 @@ For more details on the data types, the go `sizeResponse` struct can be found he
   "responseFile": "",
   "success": false,
   "time": "",
-  "totalDiskSize": 0,
+  "totalDiskSizeInGBs": 0,
   "vmName": ""
 }
 ```

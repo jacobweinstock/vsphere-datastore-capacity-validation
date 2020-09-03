@@ -28,16 +28,16 @@ func (s capacityResponse) ToLogrusFields() logrus.Fields {
 }
 
 type sizeResponse struct {
-	VMName        string  `json:"vmName"`
-	TotalDiskSize float64 `json:"totalDiskSize"`
-	baseResponse  `json:",inline"`
+	VMName             string  `json:"vmName"`
+	TotalDiskSizeInGBs float64 `json:"totalDiskSizeInGBs"`
+	baseResponse       `json:",inline"`
 }
 
 // ToLogrusFields is a helper for the logrus library
 func (c sizeResponse) ToLogrusFields() logrus.Fields {
 	return logrus.Fields{
 		"vmName":        c.VMName,
-		"totalDiskSize": c.TotalDiskSize,
+		"totalDiskSize": c.TotalDiskSizeInGBs,
 		"success":       c.Success,
 		"errorMsg":      c.ErrorMsg,
 	}

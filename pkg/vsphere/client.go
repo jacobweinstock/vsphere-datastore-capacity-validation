@@ -43,7 +43,7 @@ func NewClient(ctx context.Context, server string, username string, password str
 	}
 	client, err := govmomi.NewClient(ctx, nonAuthURL, true)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create new vSphere client")
+		return nil, errors.Wrapf(err, "unable to create new vSphere client against %v", nonAuthURL.String())
 	}
 	authenticatedURL.User = url.UserPassword(username, password)
 	if err = client.Login(ctx, authenticatedURL.User); err != nil {

@@ -44,7 +44,7 @@ func (c *sizeResponse) run() error {
 	if err != nil {
 		return err
 	}
-	c.TotalDiskSize, err = client.GetVMTotalStorageSize(c.VMName)
+	c.TotalDiskSizeInGBs, err = client.GetVMTotalStorageSize(c.VMName)
 	if err != nil {
 		return err
 	}
