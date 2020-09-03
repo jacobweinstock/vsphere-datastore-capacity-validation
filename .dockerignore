@@ -1,6 +1,4 @@
 bin
 bin/*
-.git
-.git/*
 README.md
 .gitignore
