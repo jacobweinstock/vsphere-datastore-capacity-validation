@@ -2,6 +2,7 @@ package vsphere
 
 import (
 	"fmt"
+
 	"github.com/pkg/errors"
 	"github.com/vmware/govmomi/vim25/mo"
 	"github.com/vmware/govmomi/vim25/types"
