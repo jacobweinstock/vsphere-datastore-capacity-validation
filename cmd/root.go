@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -14,7 +15,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	version = "v0.1.0"
+	appName = "vvalidator"
+)
+
 var (
+	buildTime                     string
+	gitCommit                     string
 	cfgFile                       string
 	url                           string
 	user                          string
@@ -26,11 +34,28 @@ var (
 	responseFileDirectoryFallback = "./"
 
 	rootCmd = &cobra.Command{
-		Use:   "vvalidator",
-		Short: "generic vsphere validations cli",
-		Long:  `vvalidator is a CLI library that does generic vsphere validations.`,
+		Use:     appName,
+		Short:   "generic vsphere validations cli",
+		Long:    fmt.Sprintf("%v is a CLI library that does generic vsphere validations.", appName),
+		Version: version,
 	}
 )
+
+var (
+	appInfo = versionResponse{
+		Version:   version,
+		Name:      appName,
+		GitCommit: gitCommit,
+		Built:     buildTime,
+	}
+)
+
+type versionResponse struct {
+	Version   string `json:"version"`
+	Name      string `json:"name"`
+	GitCommit string `json:"gitCommit"`
+	Built     string `json:"built"`
+}
 
 // Execute executes the root command.
 func Execute() error {
@@ -39,7 +64,7 @@ func Execute() error {
 
 func init() {
 	cobra.OnInitialize(initConfig, initLogging)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.vvalidator.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/.%v.yaml)", appName))
 	rootCmd.PersistentFlags().StringVar(&responseFileDirectory, "dir", "./", "directory to write response file")
 	rootCmd.PersistentFlags().StringVarP(&url, "url", "u", "", "vCenter url")
 	rootCmd.PersistentFlags().StringVarP(&user, "user", "n", "", "vCenter username")
@@ -50,6 +75,8 @@ func init() {
 	_ = rootCmd.MarkPersistentFlagRequired("user")
 	_ = rootCmd.MarkPersistentFlagRequired("password")
 	_ = rootCmd.MarkPersistentFlagRequired("datacenter")
+	info, _ := json.Marshal(appInfo)
+	rootCmd.SetVersionTemplate(string(info))
 }
 
 func er(msg interface{}) {
@@ -67,11 +94,11 @@ func initConfig() {
 		}
 
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".vvalidator")
+		viper.SetConfigName("." + appName)
 	}
 
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("vvalidator")
+	viper.SetEnvPrefix(appName)
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
