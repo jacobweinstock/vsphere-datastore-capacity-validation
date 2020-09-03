@@ -15,11 +15,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	version = "v0.1.0"
-	appName = "vvalidator"
-)
-
 var (
 	buildTime                     string
 	gitCommit                     string
